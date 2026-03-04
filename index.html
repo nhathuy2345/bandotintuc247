@@ -700,9 +700,24 @@
             }
         };
 
-        // Cấu hình API keys
-        const OPENWEATHER_API_KEY = '2917f38c7cd995ab5daf5b8a927bde97';
-        const MAPTILER_API_KEY = 'ee45252ec054b51177254822477fac4f62'; // MapTiler API key
+        // Cấu hình API keys sẽ được nạp từ server (đọc .env)
+        let OPENWEATHER_API_KEY;
+        let MAPTILER_API_KEY; // MapTiler API key
+
+        function loadConfig() {
+            return fetch('/config')
+                .then(r => r.json())
+                .then(cfg => {
+                    OPENWEATHER_API_KEY = cfg.openWeather;
+                    MAPTILER_API_KEY = cfg.mapTiler;
+                })
+                .catch(err => {
+                    console.error('Không thể tải cấu hình từ server:', err);
+                });
+        }
+
+        // bắt đầu nạp ngay khi script được chạy; các cuộc gọi API sau này sẽ sử dụng biến đã gán
+        loadConfig();
         
         // Các RSS feed sources cho tin tức
         const RSS_FEEDS = [
