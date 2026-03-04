@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chi tiết Thời tiết - Weather Details</title>
+    <!-- Font Awesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        :root {
+            /* Dark mode (default) */
+            --bg-primary: #1a2a3a;
+            --bg-secondary: #0f172a;
+            --bg-tertiary: #1e293b;
+            --bg-hover: #2d3a4f;
+            --text-primary: white;
+            --text-secondary: #e2e8f0;
+            --text-muted: #94a3b8;
+            --border-color: #334155;
+            --accent-blue: #3b82f6;
+            --accent-yellow: #facc15;
+        }
+
+        :root.light-mode {
+            /* Light mode */
+            --bg-primary: #f8fafc;
+            --bg-secondary: #f1f5f9;
+            --bg-tertiary: #e2e8f0;
+            --bg-hover: #cbd5e1;
+            --text-primary: #0f172a;
+            --text-secondary: #1e293b;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
+            --accent-blue: #2563eb;
+            --accent-yellow: #ca8a04;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            transition: background 0.3s, color 0.3s;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .header h1 {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 2rem;
+            color: var(--accent-blue);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn-back {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 0.95rem;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-back:hover {
+            background: var(--bg-tertiary);
+            transform: translateX(-3px);
+        }
+
+        .btn-theme {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--accent-yellow);
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.2s;
+        }
+
+        .btn-theme:hover {
+            background: var(--bg-tertiary);
+            transform: scale(1.05);
+        }
+
+        .weather-main {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+
+        .weather-location {
+            font-size: 1.8rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--accent-blue);
+        }
+
+        .weather-condition {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+            color: var(--text-secondary);
+        }
+
+        .weather-temp-large {
+            font-size: 4rem;
+            font-weight: bold;
+            color: var(--accent-yellow);
+            margin: 20px 0;
+        }
+
+        .weather-description {
+            font-size: 1.1rem;
+            color: var(--text-muted);
+            text-transform: capitalize;
+            margin-bottom: 20px;
+        }
+
+        .weather-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .weather-card {
+            background: var(--bg-tertiary);
+            border-radius: 15px;
+            padding: 20px;
+            border: 1px solid var(--border-color);
+            transition: all 0.3s;
+        }
+
+        .weather-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            border-color: var(--accent-blue);
+        }
+
+        .card-icon {
+            font-size: 2rem;
+            color: var(--accent-blue);
+            margin-bottom: 10px;
+        }
+
+        .card-label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .card-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: var(--accent-yellow);
+        }
+
+        .weather-details {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            border: 1px solid var(--border-color);
+            margin-bottom: 30px;
+        }
+
+        .details-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--accent-blue);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .details-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+
+        .detail-item {
+            background: var(--bg-tertiary);
+            padding: 15px;
+            border-radius: 10px;
+            border-left: 4px solid var(--accent-blue);
+        }
+
+        .detail-item-label {
+            font-size: 0.9rem;
+            color: var(--text-muted);
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .detail-item-value {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .detail-icon {
+            color: var(--accent-blue);
+            width: 18px;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.1rem;
+            color: var(--text-muted);
+        }
+
+        .loading-spinner {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .error {
+            background: #dc2626;
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            text-align: center;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            text-align: center;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .weather-main {
+                padding: 25px;
+            }
+
+            .weather-temp-large {
+                font-size: 3rem;
+            }
+
+            .weather-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .header {
+                flex-direction: column;
+                gap: 15px;
+                text-align: center;
+            }
+
+            .header h1 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-cloud-sun"></i> Chi tiết Thời tiết</h1>
+            <div class="header-controls">
+                <button class="btn-back" id="backBtn">
+                    <i class="fas fa-arrow-left"></i> Quay lại
+                </button>
+                <button class="btn-theme" id="themeBtn" title="Chuyển đổi chế độ sáng/tối">
+                    <i class="fas fa-moon"></i>
+                </button>
+            </div>
+        </div>
+
+        <div id="weatherContainer">
+            <div class="loading">
+                <div class="loading-spinner"><i class="fas fa-spinner fa-spin"></i></div>
+                <div>Đang tải thông tin thời tiết...</div>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>Dữ liệu thời tiết từ OpenWeatherMap | <span id="updateTime">Đang cập nhật...</span></p>
+        </div>
+    </div>
+
+    <script>
+        // Theme toggle
+        let isDarkMode = localStorage.getItem('theme') !== 'light';
+        const themeBtn = document.getElementById('themeBtn');
+
+        function initTheme() {
+            if (!isDarkMode) {
+                document.documentElement.classList.add('light-mode');
+                themeBtn.querySelector('i').classList.remove('fa-moon');
+                themeBtn.querySelector('i').classList.add('fa-sun');
+            } else {
+                document.documentElement.classList.remove('light-mode');
+                themeBtn.querySelector('i').classList.remove('fa-sun');
+                themeBtn.querySelector('i').classList.add('fa-moon');
+            }
+        }
+
+        themeBtn.addEventListener('click', function() {
+            isDarkMode = !isDarkMode;
+            if (isDarkMode) {
+                document.documentElement.classList.remove('light-mode');
+                themeBtn.querySelector('i').classList.remove('fa-sun');
+                themeBtn.querySelector('i').classList.add('fa-moon');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.classList.add('light-mode');
+                themeBtn.querySelector('i').classList.remove('fa-moon');
+                themeBtn.querySelector('i').classList.add('fa-sun');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+        // Back button
+        document.getElementById('backBtn').addEventListener('click', function() {
+            window.history.back();
+        });
+
+        // Load and display weather
+        function displayWeather() {
+            const weatherData = localStorage.getItem('currentWeather');
+            const container = document.getElementById('weatherContainer');
+
+            if (!weatherData) {
+                container.innerHTML = '<div class="error">Không có dữ liệu thời tiết. Vui lòng quay lại ứng dụng chính.</div>';
+                return;
+            }
+
+            try {
+                const data = JSON.parse(weatherData);
+
+                const temp = Math.round(data.main.temp);
+                const location = data.name + (data.sys.country ? ', ' + data.sys.country : '');
+                const condition = data.weather[0].main;
+                const description = data.weather[0].description;
+                const humidity = data.main.humidity;
+                const pressure = data.main.pressure;
+                const windSpeed = data.wind.speed;
+                const windDeg = data.wind.deg || 0;
+                const clouds = data.clouds.all;
+                const visibility = (data.visibility / 1000).toFixed(1);
+                const feelsLike = Math.round(data.main.feels_like);
+                const tempMin = Math.round(data.main.temp_min);
+                const tempMax = Math.round(data.main.temp_max);
+                const sunrise = new Date(data.sys.sunrise * 1000).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+                const sunset = new Date(data.sys.sunset * 1000).toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
+
+                // Get wind direction
+                const windDirections = ['N', 'NNE', 'NE', 'ENE', 'E', 'ESE', 'SE', 'SSE', 'S', 'SSW', 'SW', 'WSW', 'W', 'WNW', 'NW', 'NNW'];
+                const windDirIndex = Math.round(windDeg / 22.5) % 16;
+                const windDir = windDirections[windDirIndex];
+
+                const html = `
+                    <div class="weather-main">
+                        <div class="weather-location">${location}</div>
+                        <div class="weather-condition">${condition}</div>
+                        <div class="weather-temp-large">${temp}°C</div>
+                        <div class="weather-description">${description}</div>
+                    </div>
+
+                    <div class="weather-grid">
+                        <div class="weather-card">
+                            <div class="card-icon"><i class="fas fa-thermometer-half"></i></div>
+                            <div class="card-label">Cảm giác</div>
+                            <div class="card-value">${feelsLike}°C</div>
+                        </div>
+                        <div class="weather-card">
+                            <div class="card-icon"><i class="fas fa-droplets"></i></div>
+                            <div class="card-label">Độ ẩm</div>
+                            <div class="card-value">${humidity}%</div>
+                        </div>
+                        <div class="weather-card">
+                            <div class="card-icon"><i class="fas fa-gauge"></i></div>
+                            <div class="card-label">Áp suất</div>
+                            <div class="card-value">${pressure}</div>
+                        </div>
+                        <div class="weather-card">
+                            <div class="card-icon"><i class="fas fa-wind"></i></div>
+                            <div class="card-label">Tốc độ gió</div>
+                            <div class="card-value">${windSpeed}</div>
+                        </div>
+                        <div class="weather-card">
+                            <div class="card-icon"><i class="fas fa-cloud"></i></div>
+                            <div class="card-label">Mức mây</div>
+                            <div class="card-value">${clouds}%</div>
+                        </div>
+                        <div class="weather-card">
+                            <div class="card-icon"><i class="fas fa-eye"></i></div>
+                            <div class="card-label">Tầm nhìn</div>
+                            <div class="card-value">${visibility} km</div>
+                        </div>
+                    </div>
+
+                    <div class="weather-details">
+                        <div class="details-title">
+                            <i class="fas fa-info-circle"></i> Chi tiết thêm
+                        </div>
+                        <div class="details-list">
+                            <div class="detail-item">
+                                <div class="detail-item-label"><i class="fas fa-arrow-up detail-icon"></i> Nhiệt độ cao nhất</div>
+                                <div class="detail-item-value">${tempMax}°C</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-item-label"><i class="fas fa-arrow-down detail-icon"></i> Nhiệt độ thấp nhất</div>
+                                <div class="detail-item-value">${tempMin}°C</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-item-label"><i class="fas fa-compass detail-icon"></i> Hướng gió</div>
+                                <div class="detail-item-value">${windDir} (${windDeg}°)</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-item-label"><i class="fas fa-sunrise detail-icon"></i> Mặt trời mọc</div>
+                                <div class="detail-item-value">${sunrise}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-item-label"><i class="fas fa-sunset detail-icon"></i> Mặt trời lặn</div>
+                                <div class="detail-item-value">${sunset}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-item-label"><i class="fas fa-cloud-rain detail-icon"></i> Độ ẩm tương đối</div>
+                                <div class="detail-item-value">${humidity}%</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                container.innerHTML = html;
+
+                // Update time
+                const now = new Date();
+                document.getElementById('updateTime').innerText = now.toLocaleString('vi-VN');
+
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="error">Lỗi khi hiển thị dữ liệu. Vui lòng quay lại và thử lại.</div>';
+            }
+        }
+
+        // Initialize
+        window.addEventListener('DOMContentLoaded', function() {
+            initTheme();
+            displayWeather();
+        });
+    </script>
+</body>
+</html>
