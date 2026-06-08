@@ -1204,7 +1204,7 @@
 
         // Cấu hình API keys
         let OPENWEATHER_API_KEY = window.CONFIG?.OPENWEATHER_API_KEY || '2917f38c7cd995ab5daf5b8a927bde97';
-        let GOOGLE_MAPS_API_KEY = window.CONFIG?.GOOGLE_MAPS_API_KEY || ''; // Nhap Google Maps API key trong config.js hoac .env
+        let GOOGLE_MAPS_API_KEY = window.CONFIG?.GOOGLE_MAPS_API_KEY || 'AIzaSyDWGeCXVmorMAZFUB5caN5kw0fJZCy9IKc'; // Nhap Google Maps API key trong config.js hoac .env
         const runtimeConfigPromise = fetch('/config', { cache: 'no-store' })
             .then(res => res.ok ? res.json() : null)
             .then(config => {
