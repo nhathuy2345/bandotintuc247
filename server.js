@@ -15,7 +15,7 @@ app.use(express.static(path.join(__dirname, '/')));
 app.get('/config', (req, res) => {
   res.json({
     openWeather: process.env.OPENWEATHER_API_KEY || '',
-    mapTiler: process.env.MAPTILER_API_KEY || ''
+    googleMaps: process.env.GOOGLE_MAPS_API_KEY || ''
   });
 });
 
